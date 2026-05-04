@@ -1,0 +1,10 @@
+<configuration>
+    <input>
+        <net-file value="../mapas/arguelles.net.xml"/>
+        <route-files value="../mapas/arguelles.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+    </time>
+</configuration>
