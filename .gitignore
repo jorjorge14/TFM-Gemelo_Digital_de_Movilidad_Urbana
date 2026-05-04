@@ -1,0 +1,27 @@
+@'
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# VS Code
+.vscode/
+
+# Cachés
+cache/
+*/scripts/cache/
+
+# Temporales
+*.log
+*.tmp
+*.bak
+
+# Datos descargados en tiempo real
+*/datos_arguelles/pm_live.xml
+'@ | Set-Content .gitignore
