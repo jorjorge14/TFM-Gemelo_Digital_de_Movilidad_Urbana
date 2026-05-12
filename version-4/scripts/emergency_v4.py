@@ -11,11 +11,11 @@ EMERGENCY_ID = "EM1"
 EMERGENCY_ROUTE_ID = "EM_ROUTE_1"
 
 # Instante de simulación en el que se introduce el vehículo de emergencia
-DEPART_TIME = 60
+DEPART_TIME = 360
 
 # Origen y destino del vehículo de emergencia
 FROM_EDGE = "238829520"
-TO_EDGE = "5990070#1"
+TO_EDGE = "5989317" #"5990070#1" 
 
 # --------------------------------------------------
 # Modos de ejecución!!!!
@@ -25,7 +25,7 @@ TO_EDGE = "5990070#1"
 MODE = "inteligente"
 
 # Tiempo máximo de simulación
-SIM_END = 1800
+SIM_END = 3600
 
 
 # --------------------------------------------------
@@ -300,7 +300,7 @@ def save_results(metrics: dict):
     file_exists = RESULTS_CSV.exists()
 
     with open(RESULTS_CSV, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, delimiter=";") # Se usa ; para separar por columnas en el excell
         # Si el archivo no existe, se crea primero la cabecera
         if not file_exists:
             writer.writerow([
@@ -325,8 +325,8 @@ def save_results(metrics: dict):
             metrics["arrival_time"],
             metrics["travel_time"],
             metrics["waiting_time"],
-            metrics["avg_speed"],
-            metrics["distance"],
+            str(metrics["avg_speed"]).replace(".", ","),
+            str(metrics["distance"]).replace(".", ","),
             metrics["tls_actions"],
             metrics["arrived"]
         ])
