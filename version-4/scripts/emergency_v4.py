@@ -11,7 +11,7 @@ EMERGENCY_ID = "EM1"
 EMERGENCY_ROUTE_ID = "EM_ROUTE_1"
 
 # Instante de simulación en el que se introduce el vehículo de emergencia
-DEPART_TIME = 360
+DEPART_TIME = 250
 
 # Origen y destino del vehículo de emergencia
 FROM_EDGE = "238829520"
@@ -295,6 +295,12 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
 
 
 # Guarda en un CSV las métricas principales del viaje de la ambulancia
+def format_csv_value(value):
+    if value is None:
+        return ""
+    if isinstance(value, float):
+        return f"{value:.3f}".replace(".", ",")
+    return value
 def save_results(metrics: dict):
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     file_exists = RESULTS_CSV.exists()
@@ -321,12 +327,12 @@ def save_results(metrics: dict):
             metrics["mode"],
             metrics["from_edge"],
             metrics["to_edge"],
-            metrics["depart_time"],
-            metrics["arrival_time"],
-            metrics["travel_time"],
-            metrics["waiting_time"],
-            str(metrics["avg_speed"]).replace(".", ","),
-            str(metrics["distance"]).replace(".", ","),
+            format_csv_value(metrics["depart_time"]),
+            format_csv_value(metrics["arrival_time"]),
+            format_csv_value(metrics["travel_time"]),
+            format_csv_value(metrics["waiting_time"]),
+            format_csv_value(metrics["avg_speed"]),
+            format_csv_value(metrics["distance"]),
             metrics["tls_actions"],
             metrics["arrived"]
         ])
