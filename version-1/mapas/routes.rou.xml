@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-05-12 23:23:10.758841 by Eclipse SUMO randomTrips.py v1_25_0+0000-ac6c5a6752d
+<!-- generated on 2026-05-12 23:47:59.192360 by Eclipse SUMO randomTrips.py v1_25_0+0000-ac6c5a6752d
 <configuration>
     <net-file value="arguelles.net.xml"/>
     <output-trip-file value="arguelles.rou.xml"/>
@@ -8,7 +8,7 @@
 </configuration>
 -->
 
-<!-- generated on 2026-05-12T23:23:10.529214+01:00 by Eclipse SUMO duarouter 1.25.0
+<!-- generated on 2026-05-12T23:47:58.960743+01:00 by Eclipse SUMO duarouter 1.25.0
 <duarouterConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/duarouterConfiguration.xsd">
 
     <input>

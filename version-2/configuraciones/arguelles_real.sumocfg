@@ -1,7 +1,7 @@
 <configuration>
     <input>
         <net-file value="../mapas/arguelles.net.xml"/>
-        <route-files value="../mapas/vtypes.add.xml,../mapas/arguelles_real_routes.rou.xml"/>
+        <route-files value="../mapas/arguelles_real_routes.rou.xml"/>
     </input>
     <time>
         <begin value="0"/>
