@@ -5,15 +5,15 @@ import traci
 # Puerto usado para conectar Python con SUMO mediante TraCI. SUMO debe haberse iniciado previamente con el mismo puerto
 PORT = 8813
 
-# Identificador del vehículo de emergencia dentro de la simulación
+# Identificador dla ambulancia dentro de la simulación
 EMERGENCY_ID = "EM1"
 # Identificador de la ruta asignada a la ambulancia
 EMERGENCY_ROUTE_ID = "EM_ROUTE_1"
 
-# Instante de simulación en el que se introduce el vehículo de emergencia
+# Instante de simulación en el que se introduce la ambulancia
 DEPART_TIME = 250
 
-# Origen y destino del vehículo de emergencia
+# Origen y destino dla ambulancia
 FROM_EDGE = "238829520"
 TO_EDGE = "5989317" #"5990070#1" 
 
@@ -35,7 +35,7 @@ SIM_END = 3600
 CONTROL_DISTANCE_M = 120.0
 # Distancia mínima al semáforo por debajo de la cual se evita intervenir 
 MIN_CONTROL_DISTANCE_M = 3.0
-# Umbrales para detectar si el vehículo de emergencia se ha quedado prácticamente parado junto a la línea de detención del semáforo
+# Umbrales para detectar si la ambulancia se ha quedado prácticamente parado junto a la línea de detención del semáforo
 STUCK_DISTANCE_M = 2.5        
 STUCK_SPEED_M_S = 0.5
 # Tiempo máximo que se permite mantener al vehículo de emergencia en esa situación antes de restaurar el semáforo          
@@ -49,9 +49,9 @@ TLS_COOLDOWN_S = 20
 # --------------------------------------------------
 # Frecuencia mínima entre recálculos de ruta
 REROUTE_EVERY_S = 10
-# Velocidad mínima para permitir un rerouting. Si el vehículo de emergencia va muy lento, se evita recalcular la ruta para no introducir cambios inestables cuando está detenido o casi detenido
+# Velocidad mínima para permitir un rerouting. Si la ambulancia va muy lento, se evita recalcular la ruta para no introducir cambios inestables cuando está detenido o casi detenido
 REROUTE_MIN_SPEED_M_S = 3.0
-# Distancia mínima al siguiente semáforo para permitir rerouting. Si el vehículo de emergencia ya está cerca de un cruce, se evita modificar su ruta
+# Distancia mínima al siguiente semáforo para permitir rerouting. Si la ambulancia ya está cerca de un cruce, se evita modificar su ruta
 REROUTE_MIN_TLS_DIST_M = 30.0 
 
 # Rutas donde se almacenan los resultados de las simulaciones para poder analizarlos
@@ -69,12 +69,12 @@ def compute_fastest_route(from_edge: str, to_edge: str) -> list[str]:
     return edges
 
 
-# Inserta el vehículo de emergencia en la simulación con una ruta inicial válida
+# Inserta la ambulancia en la simulación con una ruta inicial válida
 def insert_emergency_vehicle(current_time: float):
     # Calcular la ruta inicial entre el origen y el destino definidos
     edges = compute_fastest_route(FROM_EDGE, TO_EDGE)
     
-    # Crear en SUMO la ruta que seguirá inicialmente la ambulancia e insertar el vehículo de emergencia en la simulación
+    # Crear en SUMO la ruta que seguirá inicialmente la ambulancia e insertar la ambulancia en la simulación
     traci.route.add(EMERGENCY_ROUTE_ID, edges)
     traci.vehicle.add(
         vehID=EMERGENCY_ID,

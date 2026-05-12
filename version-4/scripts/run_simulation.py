@@ -38,7 +38,7 @@ sumo_cmd = [
     "--remote-port",
     "8813"
 ]
-# Se lanza SUMO como proceso independiente para que siga abierto mientras se ejecuta el sistema de control del vehículo de emergencia.
+# Se lanza SUMO como proceso independiente para que siga abierto mientras se ejecuta el sistema de control dla ambulancia.
 subprocess.Popen(sumo_cmd)
 
 # Pequeña espera para dar tiempo a que SUMO-GUI termine de arrancar antes de intentar conectarse desde TraCI
@@ -46,7 +46,7 @@ time.sleep(5)
 
 # --------------------------------------------------
 # 5. Ejecución del sistema de vehículo de emergencia
-# El script se conecta a SUMO por TraCI, introduce el vehículo de emergencia, aplica la prioridad semafórica y registra resultados.
+# El script se conecta a SUMO por TraCI, introduce la ambulancia, aplica la prioridad semafórica y registra resultados.
 # --------------------------------------------------
 print("5) Ejecutando vehículo de emergencia...")
 subprocess.run(["python", "scripts/emergency_v4.py"], cwd=ROOT)
