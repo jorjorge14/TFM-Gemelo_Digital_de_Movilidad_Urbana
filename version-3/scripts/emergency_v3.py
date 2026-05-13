@@ -3,7 +3,7 @@ import traci
 # Puerto usado para conectar Python con SUMO mediante TraCI. SUMO debe haberse iniciado previamente con el mismo puerto
 PORT = 8813
 
-# Identificador del vehículo de emergencias dentro de la simulación
+# Identificador del vehículo de emergencia dentro de la simulación
 EMERGENCY_ID = "EM1"
 
 # Instante de simulación en el que se introduce el vehiculo de emergencia
@@ -17,18 +17,18 @@ def main():
     # Conectar el script Python con la simulación de SUMO ya iniciada
     traci.init(PORT)
 
-    # Variable para asegurar que el vehículo de emergencias solo se inserta una vez
+    # Variable para asegurar que el vehículo de emergencia solo se inserta una vez
     inserted = False
 
     # Ejecutar la simulación hasta el segundo 1800
     while traci.simulation.getTime() < 1800:
         t = traci.simulation.getTime()
 
-        # Insertar el vehículo de emergencias cuando se alcanza el instante definido
+        # Insertar el vehículo de emergencia cuando se alcanza el instante definido
         if not inserted and t >= DEPART_TIME:
             vehs = traci.vehicle.getIDList()
             
-            # Se toma la ruta de un vehículo ya existente como ruta inicial. Esto permite introducir rápidamente el vehiculo de emergencia en una ruta válida sin definir manualmente un recorrido nuevo
+            # Se toma la ruta de un vehículo ya existente como ruta inicial. Esto permite introducir rápidamente el vehículo de emergencia en una ruta válida sin definir manualmente un recorrido nuevo
             if vehs:
                 route = traci.vehicle.getRoute(vehs[0])
 
@@ -36,23 +36,23 @@ def main():
                 traci.vehicle.setRoute(EMERGENCY_ID, route)
 
                 inserted = True
-                print(f"t={t:.0f} Aparece el vehículo de emergencias {EMERGENCY_ID} en la red")
+                print(f"t={t:.0f} Aparece el vehículo de emergencia {EMERGENCY_ID} en la vía")
 
-        # Una vez insertado el vehículo de emergencias, se consulta su posición y su próximo semáforo
+        # Una vez insertado el vehículo de emergencia, se consulta su posición y su próximo semáforo
         if inserted and EMERGENCY_ID in traci.vehicle.getIDList():
             lane_id = traci.vehicle.getLaneID(EMERGENCY_ID)
-            print(f"t={t:.0f} El vehículo de emergencias va por el carril {lane_id}")
+            print(f"t={t:.0f} El vehículo de emergencia va por el carril {lane_id}")
 
-            # Obtener información sobre el siguiente semáforo que encontrará el vehículo de emergencias
+            # Obtener información sobre el siguiente semáforo que encontrará el vehículo de emergencia
             tls = traci.vehicle.getNextTLS(EMERGENCY_ID)
             if tls:
                 tls_id = tls[0][0]
                 dist = tls[0][2]  # distancia en metros hasta el semafóro
 
-                print(f"t={t:.0f} El siguiente semáforo es {tls_id} y el vehículo de emergencias está a {dist:.1f} m")
+                print(f"t={t:.0f} El siguiente semáforo es {tls_id} y el vehículo de emergencia está a {dist:.1f} m")
 
-                # Si el vehículo de emergencias está suficientemente cerca del cruce, se fuerza la fase 0 del semáforo.
-                # En esta versión MVP se asume que la fase 0 favorece el paso del vehículo de emergencias!!
+                # Si el vehículo de emergencia está suficientemente cerca del cruce, se fuerza la fase 0 del semáforo.
+                # En esta versión MVP se asume que la fase 0 favorece el paso del vehículo de emergencia!!
                 if dist <= CONTROL_DISTANCE_M:
                     traci.trafficlight.setPhase(tls_id, 0)
                     

@@ -40,7 +40,7 @@ subprocess.run(["python", "download_traffic_data.py"], cwd=ROOT / "scripts", che
 
 # --------------------------------------------------
 # 5. Generación de rutas a partir de datos reales
-# Convierte las intensidades medidas por los sensores en flujos de vehículos y posteriormente genera rutas completas mediante duarouter.
+# Convierte las intensidades medidas por los sensores en flujos de vehículos y posteriormente genera rutas reales completas mediante duarouter.
 # --------------------------------------------------
 print("5) Generando tráfico real...")
 subprocess.run(["python", "build_real_routes_from_pm.py"], cwd=ROOT / "scripts", check=True)
@@ -48,7 +48,7 @@ subprocess.run(["python", "build_real_routes_from_pm.py"], cwd=ROOT / "scripts",
 
 # --------------------------------------------------
 # 6. Lanzamiento de la simulación SUMO
-# Abre SUMO-GUI usando la configuración de la versión 3, añadiendo el parámetro --remote-port que permite que otro script controle la simulación desde Python mediante TraCI
+# Se abre SUMO-GUI usando la configuración de la versión 4. El parámetro --remote-port permite que otro script controle la simulación desde Python mediante TraCI.
 # --------------------------------------------------
 print("6) Lanzando SUMO-GUI...")
 subprocess.Popen(["sumo-gui", "-c", str(ROOT / "configuraciones" / "arguelles_real.sumocfg"), "--remote-port", "8813"], cwd=ROOT)
@@ -57,8 +57,8 @@ time.sleep(5)
 
 
 # --------------------------------------------------
-# 7. Ejecución del vehículo de emergencia
-# El script se conecta a SUMO por TraCI, introduce el vehículo de emergencia y aplica una primera prioridad semafórica básica
+# 7. Ejecución del sistema de vehículo de emergencia
+# El script se conecta a SUMO por TraCI, introduce el vehículo de emergencia, aplica prioridad semafórica, realiza rerouting y registra resultados.
 # --------------------------------------------------
 print("7) Ejecutando vehículo de emergencia...")
-subprocess.run(["python", "emergency_v3.py"], cwd=ROOT / "scripts", check=True)
+subprocess.run(["python", "emergency_v4.py"], cwd=ROOT / "scripts", check=True)

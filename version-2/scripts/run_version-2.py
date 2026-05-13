@@ -34,7 +34,7 @@ subprocess.run(["python", "map_sensors_to_edges.py"], cwd=ROOT / "scripts", chec
 # Descarga el archivo pm.xml del Ayuntamiento de Madrid con las medidas actualizadas de los sensores de tráfico. El resultado se guarda como datos_arguelles/pm_live.xml
 # --------------------------------------------------
 print("4) Descargando datos reales...")
-subprocess.run(["python", "fetch_pm_xml.py"], cwd=ROOT / "scripts", check=True)
+subprocess.run(["python", "download_traffic_data.py"], cwd=ROOT / "scripts", check=True)
 
 
 # --------------------------------------------------

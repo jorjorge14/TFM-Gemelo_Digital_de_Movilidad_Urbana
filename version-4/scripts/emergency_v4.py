@@ -5,15 +5,15 @@ import traci
 # Puerto usado para conectar Python con SUMO mediante TraCI. SUMO debe haberse iniciado previamente con el mismo puerto
 PORT = 8813
 
-# Identificador dla ambulancia dentro de la simulación
+# Identificador del vehículo de emergencia dentro de la simulación
 EMERGENCY_ID = "EM1"
-# Identificador de la ruta asignada a la ambulancia
+# Identificador de la ruta asignada al vehículo de emergencia
 EMERGENCY_ROUTE_ID = "EM_ROUTE_1"
 
-# Instante de simulación en el que se introduce la ambulancia
+# Instante de simulación en el que se introduce el vehículo de emergencia
 DEPART_TIME = 250
 
-# Origen y destino dla ambulancia
+# Origen y destino del vehículo de emergencia
 FROM_EDGE = "238829520"
 TO_EDGE = "5989317" #"5990070#1" 
 
@@ -22,7 +22,7 @@ TO_EDGE = "5989317" #"5990070#1"
 # --------------------------------------------------
 # "base"         -> simulación sin prioridad semafórica ni rerouting
 # "inteligente" -> simulación con prioridad semafórica y rerouting dinámico
-MODE = "inteligente"
+MODE = "base"
 
 # Tiempo máximo de simulación
 SIM_END = 3600
@@ -35,7 +35,7 @@ SIM_END = 3600
 CONTROL_DISTANCE_M = 120.0
 # Distancia mínima al semáforo por debajo de la cual se evita intervenir 
 MIN_CONTROL_DISTANCE_M = 3.0
-# Umbrales para detectar si la ambulancia se ha quedado prácticamente parado junto a la línea de detención del semáforo
+# Umbrales para detectar si el vehículo de emergencia se ha quedado prácticamente parado junto a la línea de detención del semáforo
 STUCK_DISTANCE_M = 2.5        
 STUCK_SPEED_M_S = 0.5
 # Tiempo máximo que se permite mantener al vehículo de emergencia en esa situación antes de restaurar el semáforo          
@@ -49,9 +49,9 @@ TLS_COOLDOWN_S = 20
 # --------------------------------------------------
 # Frecuencia mínima entre recálculos de ruta
 REROUTE_EVERY_S = 10
-# Velocidad mínima para permitir un rerouting. Si la ambulancia va muy lento, se evita recalcular la ruta para no introducir cambios inestables cuando está detenido o casi detenido
+# Velocidad mínima para permitir un rerouting. Si el vehículo de emergencia va muy lento, se evita recalcular la ruta para no introducir cambios inestables cuando está detenido o casi detenido
 REROUTE_MIN_SPEED_M_S = 3.0
-# Distancia mínima al siguiente semáforo para permitir rerouting. Si la ambulancia ya está cerca de un cruce, se evita modificar su ruta
+# Distancia mínima al siguiente semáforo para permitir rerouting. Si el vehículo de emergencia ya está cerca de un cruce, se evita modificar su ruta
 REROUTE_MIN_TLS_DIST_M = 30.0 
 
 # Rutas donde se almacenan los resultados de las simulaciones para poder analizarlos
@@ -69,12 +69,12 @@ def compute_fastest_route(from_edge: str, to_edge: str) -> list[str]:
     return edges
 
 
-# Inserta la ambulancia en la simulación con una ruta inicial válida
+# Inserta el vehículo de emergencia en la simulación con una ruta inicial válida
 def insert_emergency_vehicle(current_time: float):
     # Calcular la ruta inicial entre el origen y el destino definidos
     edges = compute_fastest_route(FROM_EDGE, TO_EDGE)
     
-    # Crear en SUMO la ruta que seguirá inicialmente la ambulancia e insertar la ambulancia en la simulación
+    # Crear en SUMO la ruta que seguirá inicialmente el vehículo de emergencia e insertarlo en la simulación
     traci.route.add(EMERGENCY_ROUTE_ID, edges)
     traci.vehicle.add(
         vehID=EMERGENCY_ID,
@@ -82,7 +82,7 @@ def insert_emergency_vehicle(current_time: float):
         typeID="emergency",
         depart=str(int(current_time))
     )
-    print(f"t={current_time:.0f} inserto {EMERGENCY_ID}")
+    print(f"t={current_time:.0f} Aparece el vehículo de emergencia {EMERGENCY_ID} en la vía")
     print(f"Modo: {MODE}")
     print(f"Ruta inicial: {' -> '.join(edges)}")
 
@@ -113,7 +113,7 @@ def get_phase_state(phase):
     return getattr(phase, "state", None)
 
 
-# Busca una fase del semáforo que dé verde al movimiento concreto de la ambulancia
+# Busca una fase del semáforo que dé verde al movimiento concreto del vehículo de emergencia
 def choose_green_phase_for_link(tls_id: str, link_index: int):
     current_program = traci.trafficlight.getProgram(tls_id)
     logics = get_program_logics(tls_id)
@@ -127,7 +127,7 @@ def choose_green_phase_for_link(tls_id: str, link_index: int):
                 state = get_phase_state(phase)
                 if state is None:
                     continue
-                # Cada carácter del estado representa el color de un movimiento del cruce. Si el link de la ambulancia está en verde, esta fase permite su paso
+                # Cada carácter del estado representa el color de un movimiento del cruce. Si el link del vehículo de emergencia está en verde, esta fase permite su paso
                 if 0 <= link_index < len(state) and state[link_index] in ("G", "g"):
                     return i
 
@@ -144,12 +144,12 @@ def choose_green_phase_for_link(tls_id: str, link_index: int):
     return None
 
 
-# Recalcula dinámicamente la ruta de la ambulancia hasta el destino
+# Recalcula dinámicamente la ruta del vehículo de emergencia hasta el destino
 def reroute_emergency(current_time: float):
-    # Obtener la edge actual por la que circula la ambulancia
+    # Obtener la edge actual por la que circula el vehículo de emergencia
     current_edge = traci.vehicle.getRoadID(EMERGENCY_ID)
 
-    # Evitar rerouting si la ambulancia está en una edge interna de cruce o si no se puede identificar correctamente su posición
+    # Evitar rerouting si el vehículo de emergencia está en una edge interna de cruce o si no se puede identificar correctamente su posición
     if not current_edge or current_edge.startswith(":"):
         return
 
@@ -157,12 +157,12 @@ def reroute_emergency(current_time: float):
     if current_edge == TO_EDGE:
         return
 
-     # Evitar recalcular también si la ambulancia está casi parada
+     # Evitar recalcular también si el vehículo de emergencia está casi parado
     speed = traci.vehicle.getSpeed(EMERGENCY_ID)
     if speed < REROUTE_MIN_SPEED_M_S:
         return
 
-    # Evitar recalcular también si la ambulancia está muy cerca de un semáforo
+    # Evitar recalcular también si el vehículo de emergencia está muy cerca de un semáforo
     tls_list = traci.vehicle.getNextTLS(EMERGENCY_ID)
     if tls_list:
         dist = tls_list[0][2]
@@ -172,11 +172,11 @@ def reroute_emergency(current_time: float):
     try:
         # Calcular una nueva ruta desde la edge actual hasta el destino
         new_edges = compute_fastest_route(current_edge, TO_EDGE)
-        # Asignar la nueva ruta a la ambulancia
+        # Asignar la nueva ruta al vehículo de emergencia
         traci.vehicle.setRoute(EMERGENCY_ID, new_edges)
-        print(f"t={current_time:.0f} reroute desde {current_edge} hasta {TO_EDGE}")
+        print(f"t={current_time:.0f} Se recalcula la ruta desde {current_edge} hasta {TO_EDGE}")
     except Exception as e:
-        print(f"t={current_time:.0f} error en reroute: {e}")
+        print(f"t={current_time:.0f} Ha aparecido un error en reroute: {e} !!!")
 
 
 # Guarda el estado original de un semáforo antes de modificarlo (solo se guarda la primera vez que se interviene ese semáforo)
@@ -198,17 +198,17 @@ def restore_tls(tls_id: str, tls_backup: dict, current_time: float):
         old_phase = tls_backup[tls_id]["phase"]
         traci.trafficlight.setProgram(tls_id, old_program)
         traci.trafficlight.setPhase(tls_id, old_phase)
-        print(f"t={current_time:.0f} restauro TLS {tls_id} -> program={old_program} phase={old_phase}")
+        print(f"t={current_time:.0f} Se restaura el semáforo {tls_id} -> program={old_program} phase={old_phase}")
     except Exception as e:
-        print(f"t={current_time:.0f} error restaurando {tls_id}: {e}")
+        print(f"t={current_time:.0f} Ha aparecido un error al restaurar {tls_id}: {e} !!!")
 
     # Una vez restaurado, se elimina la copia guardada
     tls_backup.pop(tls_id, None)
 
 
-# Aplica la prioridad de los semáforos al siguiente semáforo de la ambulancia
+# Aplica la prioridad de los semáforos al siguiente semáforo del vehículo de emergencia
 def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tls_state: dict):
-    # Consultar el siguiente semáforo en la ruta de la ambulancia
+    # Consultar el siguiente semáforo en la ruta del vehículo de emergencia
     tls_list = traci.vehicle.getNextTLS(EMERGENCY_ID)
     speed = traci.vehicle.getSpeed(EMERGENCY_ID)
 
@@ -222,14 +222,14 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
             tls_state["stuck_since"] = None
         return
 
-    # Datos del siguiente semáforo en la ruta de la ambulancia
+    # Datos del siguiente semáforo en la ruta del vehículo de emergencia
     tls_id = tls_list[0][0]
     tls_link_index = int(tls_list[0][1])
     dist = tls_list[0][2]
     signal_char = str(tls_list[0][3])
 
-    print(f"t={current_time:.0f} siguiente TLS={tls_id} dist={dist:.1f} m signal={signal_char}")
-    # Si la ambulancia cambia de semáforo, se restaura el semáforo anterior
+    print(f"t={current_time:.0f} El siguiente semáforo es {tls_id} y el vehículo de emergencia está a {dist:.1f} m")
+    # Si el vehículo de emergencia cambia de semáforo, se restaura el semáforo anterior
     active_tls = tls_state.get("active_tls")
     
     if active_tls is not None and active_tls != tls_id:
@@ -243,18 +243,18 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
     if current_time < cooldown_until:
         return
 
-    # Solo se interviene cuando la ambulancia está dentro de una ventana útil. Muy lejos no hace falta actuar; demasiado cerca puede generar comportamientos inestables!!
+    # Solo se interviene cuando el vehículo de emergencia está dentro de una ventana útil. Muy lejos no hace falta actuar; demasiado cerca puede generar comportamientos inestables!!
     if dist > CONTROL_DISTANCE_M or dist < MIN_CONTROL_DISTANCE_M:
         return
 
-    # Si el movimiento de la ambulancia ya tiene verde, no se modifica el semáforo
+    # Si el movimiento del vehículo de emergencia ya tiene verde, no se modifica el semáforo
     if signal_char in ("G", "g"):
         return
 
-    # Buscar una fase que proporcione verde al movimiento concreto de la ambulancia
+    # Buscar una fase que proporcione verde al movimiento concreto del vehículo de emergencia
     desired_phase = choose_green_phase_for_link(tls_id, tls_link_index)
     if desired_phase is None:
-        print(f"t={current_time:.0f} no encuentro fase útil para TLS {tls_id} link {tls_link_index}")
+        print(f"t={current_time:.0f} No se encuentra una fase útil para el semáforo {tls_id} link {tls_link_index}")
         return
     # Guardar el estado original del semáforo antes de modificarlo
     backup_tls_if_needed(tls_id, tls_backup)
@@ -266,7 +266,7 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
         traci.trafficlight.setPhase(tls_id, desired_phase)
         phase = traci.trafficlight.getPhase(tls_id)
         state = traci.trafficlight.getRedYellowGreenState(tls_id)
-        print(f"t={current_time:.0f} fuerzo fase {desired_phase} en {tls_id} -> phase={phase} state={state}")
+        print(f"t={current_time:.0f} Se fuerza la fase {desired_phase} en el semáforo {tls_id} -> phase={phase} state={state}")
 
         # Para las estadísticas, contabilizar cada semáforo intervenido una sola vez
         if tls_id not in metrics["tls_acted_ids"]:
@@ -275,7 +275,7 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
     # Guardar qué semáforo está siendo controlado actualmente
     tls_state["active_tls"] = tls_id
 
-    # Si la ambulancia queda prácticamente parada junto al semáforo durante varios segundos, se restaura el semáforo y se aplica un periodo de enfriamiento
+    # Si el vehículo de emergencia queda prácticamente parado junto al semáforo durante varios segundos, se restaura el semáforo y se aplica un periodo de enfriamiento
     if dist <= STUCK_DISTANCE_M and speed <= STUCK_SPEED_M_S:
         if tls_state.get("stuck_tls") != tls_id:
             tls_state["stuck_tls"] = tls_id
@@ -283,7 +283,7 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
         else:
             stuck_since = tls_state.get("stuck_since")
             if stuck_since is not None and current_time - stuck_since >= STUCK_TIME_S:
-                print(f"t={current_time:.0f} watchdog: ambulancia atascada en TLS {tls_id}, restauro y aplico cooldown")
+                print(f"t={current_time:.0f} Cuidado!!!: El vehículo de emergencia está atascado en el semáforo {tls_id}. Se restaura y se aplica un cooldown")
                 restore_tls(tls_id, tls_backup, current_time)
                 tls_state.setdefault("cooldown_until", {})[tls_id] = current_time + TLS_COOLDOWN_S
                 tls_state["active_tls"] = None
@@ -294,7 +294,7 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
         tls_state["stuck_since"] = None
 
 
-# Guarda en un CSV las métricas principales del viaje de la ambulancia
+# Guarda en un CSV las métricas principales del viaje del vehículo de emergencia
 def format_csv_value(value):
     if value is None:
         return ""
@@ -372,7 +372,7 @@ def finalize_metrics(metrics: dict):
     metrics.pop("speed_samples", None)
 
 
-# Muestra por la terminal un resumen de resultados del viaje de la ambulancia
+# Muestra por la terminal un resumen de resultados del viaje del vehículo de emergencia
 def print_trip_results(metrics: dict):
     print()
     print("=== RESULTADOS DEL VIAJE ===")
@@ -404,7 +404,7 @@ def main():
     # Estados originales de los semáforos intervenidos
     tls_backup = {}
     
-    # Métricas del viaje de la ambulancia
+    # Métricas del viaje del vehículo de emergencia
     metrics = build_metrics()
 
     # Estado interno del sistema de prioridad de los semáforos
@@ -426,9 +426,9 @@ def main():
                 last_reroute_t = t
                 metrics["depart_time"] = t
             except Exception as e:
-                print(f"t={t:.0f} no se pudo insertar la ambulancia: {e}")
+                print(f"t={t:.0f} No se ha podido insertar el vehículo de emergencia {e} !!!")
 
-        # Si la ambulancia está en la simulación, se actualizan sus datos
+        # Si el vehículo de emergencia está en la simulación, se actualizan sus datos
         if inserted and EMERGENCY_ID in traci.vehicle.getIDList():
             lane_id = traci.vehicle.getLaneID(EMERGENCY_ID)
             road_id = traci.vehicle.getRoadID(EMERGENCY_ID)
@@ -436,7 +436,7 @@ def main():
             waiting_time = traci.vehicle.getWaitingTime(EMERGENCY_ID)
             distance = traci.vehicle.getDistance(EMERGENCY_ID)
 
-            print(f"t={t:.0f} ambulancia en edge={road_id} lane={lane_id}")
+            print(f"t={t:.0f} El vehículo de emergencia está en edge={road_id} lane={lane_id}")
 
             metrics["waiting_time"] = waiting_time
             metrics["distance"] = distance
@@ -464,7 +464,7 @@ def main():
             arrived_and_saved = True
             break
     
-    # Si la simulación termina antes de que la ambulancia llegue se guardan igualmente los resultados parciales
+    # Si la simulación termina antes de que el vehículo de emergencia llegue se guardan igualmente los resultados parciales
     if inserted and not arrived_and_saved:
         metrics["arrival_time"] = traci.simulation.getTime()
         metrics["arrived"] = False
