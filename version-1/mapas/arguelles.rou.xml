@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-05-12 23:47:58.768832 by Eclipse SUMO randomTrips.py v1_25_0+0000-ac6c5a6752d
+<!-- generated on 2026-05-13 09:37:58.534702 by Eclipse SUMO randomTrips.py v1_25_0+0000-ac6c5a6752d
 <configuration>
     <net-file value="arguelles.net.xml"/>
     <output-trip-file value="arguelles.rou.xml"/>
