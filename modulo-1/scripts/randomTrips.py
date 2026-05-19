@@ -4,7 +4,7 @@
 # Uso dentro del TFM
 # ---------------------------------------------------------------------------
 # Este archivo corresponde al script oficial randomTrips.py incluido en SUMO.
-# En la version-1 del proyecto se utiliza para generar tráfico sintético sobre la red de Argüelles, antes de incorporar datos reales de sensores.
+# En el módulo 1 del proyecto se utiliza para generar tráfico sintético sobre la red de Argüelles, antes de incorporar datos reales de sensores.
 # Su función principal es crear viajes aleatorios entre distintos puntos de la red SUMO y, opcionalmente, llamar a duarouter para calcular las rutas completas.
 # No se modifica la lógica interna del script, ya que se trata de una herramienta auxiliar externa proporcionada por SUMO.
 # ---------------------------------------------------------------------------

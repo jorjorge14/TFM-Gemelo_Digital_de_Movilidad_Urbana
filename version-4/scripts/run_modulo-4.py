@@ -1,8 +1,10 @@
 import subprocess
+import time
 from pathlib import Path
 
-# Ruta base de la version actual del proyecto
+# Ruta base del módulo actual del proyecto
 ROOT = Path(__file__).resolve().parent.parent
+
 
 # --------------------------------------------------
 # 1. Descarga del mapa de Argüelles
@@ -10,7 +12,6 @@ ROOT = Path(__file__).resolve().parent.parent
 # --------------------------------------------------
 print("1) Descargando mapa de Argüelles...")
 subprocess.run(["python", str(ROOT / "scripts" / "download_arguelles_map.py")], cwd=ROOT / "mapas", check=True)
-print("1) Descargando mapa de Argüelles...")
 
 
 # --------------------------------------------------
@@ -39,7 +40,7 @@ subprocess.run(["python", "download_traffic_data.py"], cwd=ROOT / "scripts", che
 
 # --------------------------------------------------
 # 5. Generación de rutas a partir de datos reales
-# Convierte las intensidades medidas por los sensores en flujos de vehículos y posteriormente genera rutas completas mediante duarouter.
+# Convierte las intensidades medidas por los sensores en flujos de vehículos y posteriormente genera rutas reales completas mediante duarouter.
 # --------------------------------------------------
 print("5) Generando tráfico real...")
 subprocess.run(["python", "build_real_routes_from_pm.py"], cwd=ROOT / "scripts", check=True)
@@ -47,7 +48,17 @@ subprocess.run(["python", "build_real_routes_from_pm.py"], cwd=ROOT / "scripts",
 
 # --------------------------------------------------
 # 6. Lanzamiento de la simulación SUMO
-# Abre SUMO-GUI usando la configuración de la versión 2 con tráfico generado a partir de datos reales
+# Se abre SUMO-GUI usando la configuración de la versión 4. El parámetro --remote-port permite que otro script controle la simulación desde Python mediante TraCI.
 # --------------------------------------------------
 print("6) Lanzando SUMO-GUI...")
-subprocess.run(["sumo-gui", "-c", str(ROOT / "configuraciones" / "arguelles_real.sumocfg")], cwd=ROOT, check=True)
+subprocess.Popen(["sumo-gui", "-c", str(ROOT / "configuraciones" / "arguelles_real.sumocfg"), "--remote-port", "8813"], cwd=ROOT)
+# Pequeña espera para dar tiempo a que SUMO-GUI termine de arrancar antes de intentar conectarse desde TraCI
+time.sleep(5)
+
+
+# --------------------------------------------------
+# 7. Ejecución del sistema de vehículo de emergencia
+# El script se conecta a SUMO por TraCI, introduce el vehículo de emergencia, aplica prioridad semafórica, realiza rerouting y registra resultados.
+# --------------------------------------------------
+print("7) Ejecutando vehículo de emergencia...")
+subprocess.run(["python", "emergency_v4.py"], cwd=ROOT / "scripts", check=True)

@@ -4,12 +4,12 @@
 <duarouterConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/duarouterConfiguration.xsd">
 
     <input>
-        <net-file value="C:\Users\Usuario\Desktop\TFM\TFM-Gemelo_Digital_de_Movilidad_Urbana\version-4\mapas\arguelles.net.xml"/>
-        <route-files value="C:\Users\Usuario\Desktop\TFM\TFM-Gemelo_Digital_de_Movilidad_Urbana\version-4\mapas\arguelles_real_flows.xml"/>
+        <net-file value="C:\Users\Usuario\Desktop\TFM\TFM-Gemelo_Digital_de_Movilidad_Urbana\modulo-4\mapas\arguelles.net.xml"/>
+        <route-files value="C:\Users\Usuario\Desktop\TFM\TFM-Gemelo_Digital_de_Movilidad_Urbana\modulo-4\mapas\arguelles_real_flows.xml"/>
     </input>
 
     <output>
-        <output-file value="C:\Users\Usuario\Desktop\TFM\TFM-Gemelo_Digital_de_Movilidad_Urbana\version-4\mapas\arguelles_real_routes.rou.xml"/>
+        <output-file value="C:\Users\Usuario\Desktop\TFM\TFM-Gemelo_Digital_de_Movilidad_Urbana\modulo-4\mapas\arguelles_real_routes.rou.xml"/>
     </output>
 
     <report>

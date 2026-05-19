@@ -2,7 +2,7 @@ import subprocess
 import time
 from pathlib import Path
 
-# Ruta base de la version actual del proyecto
+# Ruta base del módulo actual del proyecto
 ROOT = Path(__file__).resolve().parent.parent
 
 
