@@ -242,7 +242,7 @@ version-4/resultados/
 
 El proyecto utiliza principalmente dos fuentes de información:
 
-- Datos abiertos de tráfico del Ayuntamiento de Madrid (que pueden encontrarse en el siguiente enlace ["enlace"](https://informo.madrid.es/informo/tmadrid/pm.xml)).
+- Datos abiertos de tráfico del Ayuntamiento de Madrid, disponibles en el siguiente enlace: [informo](https://informo.madrid.es/informo/tmadrid/pm.xml).
 - Red viaria obtenida a partir de OpenStreetMap.
 
 Los datos de tráfico se utilizan para generar escenarios de simulación más próximos al comportamiento real de la zona de estudio. En concreto, la intensidad de tráfico se interpreta como vehículos por hora y se emplea para construir la demanda de vehículos dentro de SUMO.
