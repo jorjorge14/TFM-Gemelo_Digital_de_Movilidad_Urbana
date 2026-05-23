@@ -95,6 +95,8 @@ C:\Program Files (x86)\Eclipse\Sumo
 
 En ese caso, la variable de entorno `SUMO_HOME` debe apuntar a esa carpeta.
 
+El notebook de preprocesamiento puede ejecutarse desde Anaconda Prompt, siempre que el entorno utilizado tenga instaladas las librerías necesarias.
+
 ## Instalación
 
 Se recomienda crear un entorno virtual de Python antes de instalar las dependencias.
@@ -147,7 +149,7 @@ sumo-gui --version
 
 Si Python no encuentra las librerías `traci` o `sumolib`, puede ser necesario añadir las herramientas de SUMO al `PYTHONPATH`.
 
-En Windows:
+En Windows, usando Anaconda Prompt o CMD:
 
 ```bash
 set SUMO_HOME=C:\Program Files (x86)\Eclipse\Sumo
@@ -163,23 +165,40 @@ export PYTHONPATH=$SUMO_HOME/tools:$PYTHONPATH
 
 ## Ejecución del notebook de preprocesamiento
 
-Para abrir el notebook de preprocesamiento:
+El notebook de preprocesamiento se encuentra en la raíz del repositorio:
+
+```text
+TFM_Procesamiento_datos_trafico_Madrid.ipynb
+```
+
+Para ejecutarlo es necesario tener instalado Jupyter Notebook o JupyterLab, además de las librerías indicadas en el fichero `requirements.txt`.
+
+Una forma sencilla de abrirlo en Windows es utilizar Anaconda Prompt. Desde la carpeta raíz del repositorio, se puede ejecutar:
 
 ```bash
 jupyter notebook
 ```
 
-o bien:
+Después, en la ventana del navegador que se abre automáticamente, se selecciona el fichero:
+
+```text
+TFM_Procesamiento_datos_trafico_Madrid.ipynb
+```
+
+También puede abrirse con JupyterLab mediante:
 
 ```bash
 jupyter lab
 ```
 
-Después, abrir el fichero:
+Si se utiliza un entorno de conda, es recomendable activarlo antes de abrir Jupyter. Por ejemplo:
 
-```text
-TFM_Procesamiento_datos_trafico_Madrid.ipynb
+```bash
+conda activate tfm-sumo
+jupyter notebook
 ```
+
+El notebook realiza la lectura y preparación de los datos abiertos de tráfico, la transformación de coordenadas, la delimitación de la zona de estudio y el filtrado de sensores. Los ficheros generados posteriormente se utilizan como entrada en las versiones que trabajan con datos reales.
 
 ## Ejecución de las versiones
 
@@ -213,7 +232,7 @@ cd version-4
 python scripts/run_version-4.py
 ```
 
-Los resultados de la versión 4 se almacenan en:
+Los resultados de la versión 4 se almacenan en la siguiente ruta:
 
 ```text
 version-4/resultados/
@@ -223,7 +242,7 @@ version-4/resultados/
 
 El proyecto utiliza principalmente dos fuentes de información:
 
-- Datos abiertos de tráfico del Ayuntamiento de Madrid.
+- Datos abiertos de tráfico del Ayuntamiento de Madrid (que pueden encontrarse en el siguiente enlace ["enlace"](https://informo.madrid.es/informo/tmadrid/pm.xml)).
 - Red viaria obtenida a partir de OpenStreetMap.
 
 Los datos de tráfico se utilizan para generar escenarios de simulación más próximos al comportamiento real de la zona de estudio. En concreto, la intensidad de tráfico se interpreta como vehículos por hora y se emplea para construir la demanda de vehículos dentro de SUMO.
@@ -243,7 +262,3 @@ Los datos de tráfico se utilizan para generar escenarios de simulación más pr
 Máster Universitario en Ingeniería de Telecomunicación  
 Escuela Técnica Superior de Ingenieros de Telecomunicación  
 Universidad Politécnica de Madrid
-
-## Tutor
-
-**Mario Sanz Rodrigo**
