@@ -6,6 +6,14 @@ El proyecto consiste en el desarrollo de un entorno de simulación de movilidad 
 
 El repositorio está organizado en distintas versiones independientes. Cada versión representa una fase de desarrollo del proyecto y puede ejecutarse por separado, sin necesidad de ejecutar las versiones anteriores. Esta organización permite consultar de forma progresiva la evolución del sistema, desde una simulación básica con tráfico aleatorio hasta una simulación avanzada con datos reales, vehículo de emergencia, rerouting dinámico y prioridad semafórica.
 
+## Zona de estudio
+
+La zona de estudio seleccionada para el desarrollo del proyecto corresponde al entorno de Argüelles, en Madrid. En la siguiente imagen se muestra el área delimitada junto con los sensores de tráfico utilizados durante el preprocesamiento de datos.
+
+<p align="center">
+  <img src="imagenes/zona_estudio_arguelles.png" alt="Zona de estudio de Argüelles" width="800">
+</p>
+
 ## Estructura del repositorio
 
 ```text
@@ -50,6 +58,8 @@ En esta fase se realiza la lectura de los datos, la transformación de coordenad
 
 Este notebook no forma parte de una versión concreta, sino que se utiliza como fase previa para generar los ficheros de entrada necesarios para las versiones que trabajan con datos reales.
 
+
+
 ## Versiones del proyecto
 
 ### Versión 1: escenario base con tráfico aleatorio
@@ -81,11 +91,10 @@ Esta versión permite comparar distintos escenarios y analizar si las estrategia
 Para ejecutar el proyecto es necesario disponer de:
 
 - Python 3.10 o superior.
-- SUMO instalado.
+- SUMO 1.25.0 o superior.
 - Variable de entorno `SUMO_HOME` configurada.
 - Librerías de Python incluidas en `requirements.txt`.
 - Jupyter Notebook o JupyterLab para ejecutar el notebook de preprocesamiento.
-- Conexión a Internet para descargar datos abiertos de tráfico.
 
 En Windows, SUMO suele instalarse por defecto en una ruta similar a:
 
