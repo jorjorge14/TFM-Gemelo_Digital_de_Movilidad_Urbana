@@ -1,0 +1,11 @@
+numpy
+requests
+pyproj
+shapely
+geopandas
+osmnx
+matplotlib
+jupyter
+openpyxl
+traci
+sumolib
