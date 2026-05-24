@@ -12,7 +12,7 @@ EMERGENCY_ID = "EM1"
 EMERGENCY_ROUTE_ID = "EM_ROUTE_1"
 
 # Instante de simulación en el que se introduce el vehículo de emergencia
-DEPART_TIME = 3000
+DEPART_TIME = 500
 
 # Origen y destino del vehículo de emergencia
 FROM_EDGE = "238829520"
