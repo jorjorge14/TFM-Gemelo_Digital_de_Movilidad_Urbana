@@ -1,6 +1,7 @@
 from pathlib import Path
 import csv
 import traci
+import xml.etree.ElementTree as ET
 
 # Puerto usado para conectar Python con SUMO mediante TraCI. SUMO debe haberse iniciado previamente con el mismo puerto
 PORT = 8813
@@ -11,11 +12,11 @@ EMERGENCY_ID = "EM1"
 EMERGENCY_ROUTE_ID = "EM_ROUTE_1"
 
 # Instante de simulación en el que se introduce el vehículo de emergencia
-DEPART_TIME = 250
+DEPART_TIME = 3000
 
 # Origen y destino del vehículo de emergencia
 FROM_EDGE = "238829520"
-TO_EDGE = "5989317" #"5990070#1" 
+TO_EDGE = "5990070#1" #"5989317" 
 
 # --------------------------------------------------
 # Modos de ejecución!!!!
@@ -58,7 +59,19 @@ REROUTE_MIN_TLS_DIST_M = 30.0
 BASE_DIR = Path(__file__).resolve().parent.parent
 RESULTS_DIR = BASE_DIR / "resultados"
 RESULTS_CSV = RESULTS_DIR / "emergency_results.csv"
+PM_XML = BASE_DIR / "datos_arguelles" / "pm_live.xml"
 
+
+# Obtiene la fecha y hora de la captura de datos de tráfico usada en la simulación para el analisis de los resultados
+def get_traffic_data_time() -> str:
+    try:
+        root = ET.parse(PM_XML).getroot()
+        fecha = root.find(".//fecha_hora")
+        if fecha is not None and fecha.text:
+            return fecha.text.strip()
+    except Exception as e:
+        print(f"No se pudo leer la fecha_hora de pm_live.xml: {e}")
+    return ""
 
 # Calcula la ruta más rápida entre dos edges usando el motor de rutas de SUMO. Se utiliza el tipo de vehículo "emergency" para que SUMO tenga en cuenta las características definidas para ese vehículo
 def compute_fastest_route(from_edge: str, to_edge: str) -> list[str]:
@@ -320,7 +333,8 @@ def save_results(metrics: dict):
                 "avg_speed_m_s",
                 "distance_m",
                 "tls_actions",
-                "arrived"
+                "arrived",
+                "traffic_data_time"
             ])
         # Cada ejecución añade una nueva fila al CSV
         writer.writerow([
@@ -334,7 +348,8 @@ def save_results(metrics: dict):
             format_csv_value(metrics["avg_speed"]),
             format_csv_value(metrics["distance"]),
             metrics["tls_actions"],
-            metrics["arrived"]
+            metrics["arrived"],
+            metrics["traffic_data_time"]
         ])
 
 
@@ -344,6 +359,7 @@ def build_metrics() -> dict:
         "mode": MODE,
         "from_edge": FROM_EDGE,
         "to_edge": TO_EDGE,
+        "traffic_data_time": get_traffic_data_time(),
         "depart_time": None,
         "arrival_time": None,
         "travel_time": None,
@@ -379,6 +395,7 @@ def print_trip_results(metrics: dict):
     print(f"Modo: {metrics['mode']}")
     print(f"Origen: {metrics['from_edge']}")
     print(f"Destino: {metrics['to_edge']}")
+    print(f"Fecha y hora de los datos de tráfico: {metrics['traffic_data_time']}")
     print(f"Tiempo de salida: {metrics['depart_time']} s")
     print(f"Tiempo de llegada: {metrics['arrival_time']} s")
     print(f"Tiempo total de viaje: {metrics['travel_time']} s")
@@ -473,12 +490,13 @@ def main():
         save_results(metrics)
 
         print()
-        print("=== RESULTADOS DEL VIAJE (SINO A LLEGADO!!) ===")
+        print("=== RESULTADOS DEL VIAJE (NO A LLEGADO!!) ===")
         print(f"Modo: {metrics['mode']}")
         print(f"Origen: {metrics['from_edge']}")
         print(f"Destino: {metrics['to_edge']}")
         print(f"Tiempo de salida: {metrics['depart_time']} s")
         print(f"Tiempo final simulado: {metrics['arrival_time']} s")
+        print(f"Fecha y hora de los datos de tráfico: {metrics['traffic_data_time']}")
         print(f"Tiempo de espera acumulado: {metrics['waiting_time']:.1f} s")
         print(f"Velocidad media: {metrics['avg_speed']:.2f} m/s")
         print(f"Distancia recorrida: {metrics['distance']:.1f} m")
