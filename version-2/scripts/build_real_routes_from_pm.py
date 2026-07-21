@@ -31,7 +31,7 @@ INTERVAL_S = 300                # Tamaño de cada intervalo temporal (5 min)
 
 MAX_SENSORS = None              # Limitar sensores (None = usar todos)
 
-GLOBAL_SCALE = 0.40             # Escala global de demanda (para reducir la intensidad real a un 40 %)
+GLOBAL_SCALE = 0.40             # Escala global de demanda (para reducir la intensidad real a un XX %)
 MAX_VEH_PER_FLOW = 60           # Límite máximo de vehículos por sensor e intervalo
 USE_ONLY_BORDER_SENSORS = True  # Usar solo sensores de borde para evitar doble conteo
 
