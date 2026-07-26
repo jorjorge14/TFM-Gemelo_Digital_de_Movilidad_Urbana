@@ -28,7 +28,6 @@ MODE = "inteligente"
 # Tiempo máximo de simulación
 SIM_END = 3600
 
-
 # --------------------------------------------------
 # Parámetros de prioridad de los semáforos
 # --------------------------------------------------
@@ -43,7 +42,6 @@ STUCK_SPEED_M_S = 0.5
 STUCK_TIME_S = 8    
 # Tiempo durante el que se evita volver a actuar sobre un semáforo restaurado (tiempo de enfriamiento)           
 TLS_COOLDOWN_S = 20            
-
 
 # --------------------------------------------------
 # Parámetros de rerouting
@@ -165,23 +163,19 @@ def reroute_emergency(current_time: float):
     # Evitar rerouting si el vehículo de emergencia está en una edge interna de cruce o si no se puede identificar correctamente su posición
     if not current_edge or current_edge.startswith(":"):
         return
-
-    # Si ya está en la edge de destino, tampoc tiene sentido recalcular
+    # Evitar rerouting si el vehículo de emergencia ya ha llegado a su destino
     if current_edge == TO_EDGE:
         return
-
-     # Evitar recalcular también si el vehículo de emergencia está casi parado
+     # Evitar rerouting si el vehículo de emergencia está casi parado
     speed = traci.vehicle.getSpeed(EMERGENCY_ID)
     if speed < REROUTE_MIN_SPEED_M_S:
         return
-
-    # Evitar recalcular también si el vehículo de emergencia está muy cerca de un semáforo
+    # Evitar rerouting también si el vehículo de emergencia está muy cerca de un semáforo
     tls_list = traci.vehicle.getNextTLS(EMERGENCY_ID)
     if tls_list:
         dist = tls_list[0][2]
         if dist <= REROUTE_MIN_TLS_DIST_M:
             return
-
     try:
         # Calcular una nueva ruta desde la edge actual hasta el destino
         new_edges = compute_fastest_route(current_edge, TO_EDGE)

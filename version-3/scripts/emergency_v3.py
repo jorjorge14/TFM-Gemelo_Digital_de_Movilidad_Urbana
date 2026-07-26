@@ -7,7 +7,7 @@ PORT = 8813
 EMERGENCY_ID = "EM1"
 
 # Instante de simulación en el que se introduce el vehiculo de emergencia
-DEPART_TIME = 60
+DEPART_TIME = 1000
 
 # Distancia máxima al semáforo a partir de la cual se activa la prioridad
 CONTROL_DISTANCE_M = 100.0  
@@ -20,8 +20,8 @@ def main():
     # Variable para asegurar que el vehículo de emergencia solo se inserta una vez
     inserted = False
 
-    # Ejecutar la simulación hasta el segundo 1800
-    while traci.simulation.getTime() < 1800:
+    # Ejecutar la simulación hasta el segundo 3600
+    while traci.simulation.getTime() < 3600:
         t = traci.simulation.getTime()
 
         # Insertar el vehículo de emergencia cuando se alcanza el instante definido
