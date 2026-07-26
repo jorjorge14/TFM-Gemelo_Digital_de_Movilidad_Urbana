@@ -128,7 +128,6 @@ def get_phase_state(phase):
 def choose_green_phase_for_link(tls_id: str, link_index: int):
     current_program = traci.trafficlight.getProgram(tls_id)
     logics = get_program_logics(tls_id)
-
     # Primero se intenta encontrar una fase válida dentro del programa actual
     for logic in logics:
         program_id = get_logic_program_id(logic)
@@ -141,7 +140,6 @@ def choose_green_phase_for_link(tls_id: str, link_index: int):
                 # Cada carácter del estado representa el color de un movimiento del cruce. Si el link del vehículo de emergencia está en verde, esta fase permite su paso
                 if 0 <= link_index < len(state) and state[link_index] in ("G", "g"):
                     return i
-
     # Si no se encuentra en el programa actual, se revisan otros programas disponibles
     for logic in logics:
         phases = get_logic_phases(logic)
@@ -264,7 +262,6 @@ def handle_tls_priority(current_time: float, tls_backup: dict, metrics: dict, tl
         return
     # Guardar el estado original del semáforo antes de modificarlo
     backup_tls_if_needed(tls_id, tls_backup)
-
     current_phase = traci.trafficlight.getPhase(tls_id)
 
     # Cambiar de fase solo si la fase actual no es ya la deseada
