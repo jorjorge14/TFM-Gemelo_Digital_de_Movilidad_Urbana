@@ -155,7 +155,7 @@ def choose_green_phase_for_link(tls_id: str, link_index: int):
     return None
 
 
-# Recalcula dinámicamente la ruta del vehículo de emergencia hasta el destino
+# Rerouing dinámico del vehículo de emergencia hasta el destino !!!
 def reroute_emergency(current_time: float):
     # Obtener la edge actual por la que circula el vehículo de emergencia
     current_edge = traci.vehicle.getRoadID(EMERGENCY_ID)
@@ -199,7 +199,6 @@ def backup_tls_if_needed(tls_id: str, tls_backup: dict):
 def restore_tls(tls_id: str, tls_backup: dict, current_time: float):
     if tls_id not in tls_backup:
         return
-
     try:
         old_program = tls_backup[tls_id]["program"]
         old_phase = tls_backup[tls_id]["phase"]
