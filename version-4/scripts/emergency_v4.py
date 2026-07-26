@@ -137,7 +137,7 @@ def choose_green_phase_for_link(tls_id: str, link_index: int):
                 state = get_phase_state(phase)
                 if state is None:
                     continue
-                # Cada carácter del estado representa el color de un movimiento del cruce. Si el link del vehículo de emergencia está en verde, esta fase permite su paso
+                # Cada carácter del estado representa el color de un movimiento del cruce. Si está en verde, esta fase permite su paso
                 if 0 <= link_index < len(state) and state[link_index] in ("G", "g"):
                     return i
     # Si no se encuentra en el programa actual, se revisan otros programas disponibles
