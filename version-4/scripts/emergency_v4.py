@@ -16,14 +16,14 @@ DEPART_TIME = 500
 
 # Origen y destino del vehículo de emergencia
 FROM_EDGE = "238829520"
-TO_EDGE = "5990070#1" #"5989317" 
+TO_EDGE =  "5989317"  #"5990070#1"  #"5990532" 
 
 # --------------------------------------------------
 # Modos de ejecución!!!!
 # --------------------------------------------------
 # "base"         -> simulación sin prioridad semafórica ni rerouting
 # "inteligente" -> simulación con prioridad semafórica y rerouting dinámico
-MODE = "inteligente"
+MODE = "base"
 
 # Tiempo máximo de simulación
 SIM_END = 3600
