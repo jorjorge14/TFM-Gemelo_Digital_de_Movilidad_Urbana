@@ -19,7 +19,7 @@ subprocess.run(["python", str(ROOT / "scripts" / "download_arguelles_map.py")], 
 # Convierte el archivo arguelles.osm en una red de SUMO. El resultado se guarda como mapas/arguelles.net.xml
 # --------------------------------------------------
 print("2) Generando red SUMO...")
-subprocess.run(["netconvert", "--osm-files", "arguelles.osm", "-o", "arguelles.net.xml", "--proj.utm"], cwd=ROOT / "mapas", check=True)
+subprocess.run(["netconvert", "--osm-files", "arguelles.osm", "-o", "arguelles.net.xml", "--proj.utm", "--output.street-names", "true"], cwd=ROOT / "mapas", check=True)
 
 
 # --------------------------------------------------

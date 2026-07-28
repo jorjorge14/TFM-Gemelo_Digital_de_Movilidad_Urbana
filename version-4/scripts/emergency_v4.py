@@ -2,6 +2,7 @@ from pathlib import Path
 import csv
 import traci
 import xml.etree.ElementTree as ET
+import traci.constants as tc
 
 # Puerto usado para conectar Python con SUMO mediante TraCI. SUMO debe haberse iniciado previamente con el mismo puerto
 PORT = 8813
@@ -23,7 +24,7 @@ TO_EDGE =  "5990070#1"  #"5989317"  #"5990532"
 # --------------------------------------------------
 # "base"         -> simulación sin prioridad semafórica ni rerouting
 # "inteligente" -> simulación con prioridad semafórica y rerouting dinámico
-MODE = "base"
+MODE = "inteligente"  
 
 # Tiempo máximo de simulación
 SIM_END = 3600
@@ -57,6 +58,15 @@ RESULTS_DIR = BASE_DIR / "resultados"
 RESULTS_CSV = RESULTS_DIR / "emergency_results.csv"
 PM_XML = BASE_DIR / "datos_arguelles" / "pm_live.xml"
 
+# --------------------------------------------------
+# Parámetros para prueba controlada del rerouting (con edge destino "5990070#1")
+# --------------------------------------------------
+# Para hacer la prueba poner valor a TRUE, sino dejar en FALSE 
+FORCE_REROUTING_TEST = False
+# Edge futuro de la ruta a la que se asigna un coste muy elevado 
+TEST_PENALIZED_EDGE = "43407381#4"
+# Tiempo de viaje artificial asignado a esa arista
+TEST_EDGE_TRAVEL_TIME_S = 10000.0
 
 # Obtiene la fecha y hora de la captura de datos de tráfico usada en la simulación para el analisis de los resultados
 def get_traffic_data_time() -> str:
@@ -142,6 +152,46 @@ def choose_green_phase_for_link(tls_id: str, link_index: int):
                 return i
     # Si el programa actual no contiene una fase favorable (raro), no se interviene sobre el semáforo
     return None
+
+
+# Configura una prueba controlada para provocar un cambio de ruta
+def configure_forced_rerouting_test(current_time: float):
+    if not FORCE_REROUTING_TEST:
+        return
+
+    current_route = list(
+        traci.vehicle.getRoute(EMERGENCY_ID)
+    )
+
+    if TEST_PENALIZED_EDGE not in current_route:
+        print(
+            f"Prueba de rerouting: la arista "
+            f"{TEST_PENALIZED_EDGE} no pertenece a la ruta inicial"
+        )
+        return
+
+    # Utilizar los pesos personalizados del vehículo y, para el resto
+    # de aristas, los tiempos agregados de la simulación
+    traci.vehicle.setRoutingMode(
+        EMERGENCY_ID,
+        tc.ROUTING_MODE_AGGREGATED_CUSTOM
+    )
+
+    # Asignar un tiempo de viaje artificialmente elevado
+    # a una arista futura de la ruta
+    traci.vehicle.setAdaptedTraveltime(
+        EMERGENCY_ID,
+        TEST_PENALIZED_EDGE,
+        time=TEST_EDGE_TRAVEL_TIME_S,
+        begTime=current_time,
+        endTime=SIM_END
+    )
+
+    print(
+        f"Prueba de rerouting activada: se asignan "
+        f"{TEST_EDGE_TRAVEL_TIME_S:.0f} s a la arista "
+        f"{TEST_PENALIZED_EDGE}"
+    )
 
 
 # Recalcula dinámicamente la ruta del vehículo de emergencia utilizando los tiempos de viaje actuales de la simulación
@@ -373,8 +423,67 @@ def build_metrics() -> dict:
         "tls_acted_ids": set(),
         "arrived": False,
         "speed_samples": [],
+        "route_segments": [],
+        "last_route_distance": 0.0,
+        "last_route_edge": None,
     }
 
+
+# Funcionesn auxiliares para registrar la ruta y que el usuario pueda ver el recorrido de forma práctica
+def update_route_summary(
+    metrics: dict,
+    road_id: str,
+    total_distance: float
+):
+    # Distancia avanzada desde el paso anterior
+    distance_delta = max(
+        0.0,
+        total_distance - metrics["last_route_distance"]
+    )
+    metrics["last_route_distance"] = total_distance
+    # No registrar las aristas internas de los cruces
+    if not road_id or road_id.startswith(":"):
+        return
+    # Consultar el nombre únicamente cuando cambia la arista
+    if road_id != metrics["last_route_edge"]:
+        street_name = traci.edge.getStreetName(road_id).strip()
+        # Algunas aristas importadas desde OSM pueden no tener nombre
+        if not street_name:
+            street_name = f"Edge {road_id}"
+        route_segments = metrics["route_segments"]
+        # Agrupar aristas consecutivas que pertenezcan
+        # a la misma calle
+        if (
+            not route_segments
+            or route_segments[-1]["street"] != street_name
+        ):
+            route_segments.append({
+                "street": street_name,
+                "distance_m": 0.0,
+            })
+        metrics["last_route_edge"] = road_id
+    # Acumular la distancia recorrida en el segmento actual
+    if metrics["route_segments"]:
+        metrics["route_segments"][-1]["distance_m"] += (
+            distance_delta
+        )
+# Muestra un resumen de las calles recorridas
+def print_route_summary(metrics: dict):
+    route_segments = metrics.get("route_segments", [])
+    print()
+    print("=== RUTA SEGUIDA POR EL VEHÍCULO DE EMERGENCIA ===")
+    if not route_segments:
+        print("No se ha podido obtener la ruta recorrida.")
+    else:
+        for index, segment in enumerate(
+            route_segments,
+            start=1
+        ):
+            street = segment["street"]
+            distance = segment["distance_m"]
+            print(f"{index}. {street}: aproximadamente {distance:.0f} m"
+            )
+    print("=============================================")
 
 # Calcula las métricas finales antes de guardar los resultados
 def finalize_metrics(metrics: dict):
@@ -408,6 +517,7 @@ def print_trip_results(metrics: dict):
     print(f"Semáforos intervenidos: {metrics['tls_actions']}")
     print(f"CSV guardado en: {RESULTS_CSV}")
     print("============================")
+    print_route_summary(metrics)
     print()
 
 
@@ -452,14 +562,25 @@ def main():
         if inserted and EMERGENCY_ID in traci.vehicle.getIDList():
             # Registrar el instante real en el que el vehículo entra en la red
             if metrics["depart_time"] is None:
-                metrics["depart_time"] = traci.vehicle.getDeparture(EMERGENCY_ID)
+                metrics["depart_time"] = traci.vehicle.getDeparture(
+                    EMERGENCY_ID
+                )
                 last_reroute_t = metrics["depart_time"]
+
+                configure_forced_rerouting_test(
+                    metrics["depart_time"]
+                )
                 
             lane_id = traci.vehicle.getLaneID(EMERGENCY_ID)
             road_id = traci.vehicle.getRoadID(EMERGENCY_ID)
             speed = traci.vehicle.getSpeed(EMERGENCY_ID)
             distance = traci.vehicle.getDistance(EMERGENCY_ID)
-
+            update_route_summary(
+                metrics,
+                road_id,
+                distance
+            )
+            
             print(f"t={t:.0f} El vehículo de emergencia está en edge={road_id} lane={lane_id}")
 
             # Acumular el tiempo durante el que el vehículo permanece prácticamente detenido
