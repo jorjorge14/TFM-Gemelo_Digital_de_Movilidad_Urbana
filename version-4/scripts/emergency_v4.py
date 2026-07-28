@@ -24,7 +24,7 @@ TO_EDGE =  "5990070#1"  #"5989317"  #"5990532"
 # --------------------------------------------------
 # "base"         -> simulación sin prioridad semafórica ni rerouting
 # "inteligente" -> simulación con prioridad semafórica y rerouting dinámico
-MODE = "inteligente"  
+MODE = "base"  
 
 # Tiempo máximo de simulación
 SIM_END = 3600
@@ -35,7 +35,7 @@ SIM_END = 3600
 # Distancia máxima al semáforo a partir de la cual se activa la prioridad
 CONTROL_DISTANCE_M = 120.0
 # Distancia mínima al semáforo por debajo de la cual se evita intervenir 
-MIN_CONTROL_DISTANCE_M = 3.0
+MIN_CONTROL_DISTANCE_M = 2.0
 # Umbrales para detectar si el vehículo de emergencia se ha quedado prácticamente parado junto a la línea de detención del semáforo
 STUCK_DISTANCE_M = 2.5        
 STUCK_SPEED_M_S = 0.5
@@ -50,7 +50,7 @@ TLS_COOLDOWN_S = 20
 # Frecuencia mínima entre recálculos de ruta
 REROUTE_EVERY_S = 10
 # Distancia mínima al siguiente semáforo para permitir rerouting. Si el vehículo de emergencia ya está cerca de un cruce, se evita modificar su ruta
-REROUTE_MIN_TLS_DIST_M = 30.0 
+REROUTE_MIN_TLS_DIST_M = 20.0 
 
 # Rutas donde se almacenan los resultados de las simulaciones para poder analizarlos
 BASE_DIR = Path(__file__).resolve().parent.parent

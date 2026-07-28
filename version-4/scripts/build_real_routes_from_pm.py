@@ -111,7 +111,14 @@ def mark_border_sensors(net: sumolib.net.Net, df_map: pd.DataFrame) -> pd.DataFr
 
 # -------------------------
 # Selección de edges destino (sinks)
-# Selecciona edges de salida (destinos) cercanas al borde del área.
+# La función pick_sink_edges() hace lo siguiente:
+# 1. Calcula el rectángulo delimitado por las coordenadas de los sensores.
+# 2. Añade un margen de 150 metros.
+# 3. Busca edges situadas en las zonas exteriores de ese rectángulo.
+# 4. Descarta edges internas de cruces, cuyos identificadores comienzan por :.
+# 5. Descarta edges muy cortas, inferiores a 20 metros.
+# 6. Mezcla aleatoriamente las candidatas.
+# 7. Selecciona 30.
 # -------------------------
 def pick_sink_edges(net: sumolib.net.Net, n: int = 30) -> list[str]:
 
