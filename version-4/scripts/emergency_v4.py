@@ -17,14 +17,14 @@ DEPART_TIME = 500
 
 # Origen y destino del vehículo de emergencia
 FROM_EDGE = "238829520"
-TO_EDGE =  "5990070#1"  #"5989317"  #"5990532" 
+TO_EDGE = "5990070#1"   #"5989317"   #"5990532"    
 
 # --------------------------------------------------
 # Modos de ejecución!!!!
 # --------------------------------------------------
 # "base"         -> simulación sin prioridad semafórica ni rerouting
 # "inteligente" -> simulación con prioridad semafórica y rerouting dinámico
-MODE = "base"  
+MODE = "inteligente" 
 
 # Tiempo máximo de simulación
 SIM_END = 3600
@@ -62,7 +62,7 @@ PM_XML = BASE_DIR / "datos_arguelles" / "pm_live.xml"
 # Parámetros para prueba controlada del rerouting (con edge destino "5990070#1")
 # --------------------------------------------------
 # Para hacer la prueba poner valor a TRUE, sino dejar en FALSE 
-FORCE_REROUTING_TEST = False
+FORCE_REROUTING_TEST = True
 # Edge futuro de la ruta a la que se asigna un coste muy elevado 
 TEST_PENALIZED_EDGE = "43407381#4"
 # Tiempo de viaje artificial asignado a esa arista
@@ -158,27 +158,21 @@ def choose_green_phase_for_link(tls_id: str, link_index: int):
 def configure_forced_rerouting_test(current_time: float):
     if not FORCE_REROUTING_TEST:
         return
-
     current_route = list(
         traci.vehicle.getRoute(EMERGENCY_ID)
     )
-
     if TEST_PENALIZED_EDGE not in current_route:
         print(
             f"Prueba de rerouting: la arista "
             f"{TEST_PENALIZED_EDGE} no pertenece a la ruta inicial"
         )
         return
-
-    # Utilizar los pesos personalizados del vehículo y, para el resto
-    # de aristas, los tiempos agregados de la simulación
+    # Utilizar los pesos personalizados del vehículo y, para el resto de aristas, los tiempos agregados de la simulación
     traci.vehicle.setRoutingMode(
         EMERGENCY_ID,
         tc.ROUTING_MODE_AGGREGATED_CUSTOM
     )
-
-    # Asignar un tiempo de viaje artificialmente elevado
-    # a una arista futura de la ruta
+    # Asignar un tiempo de viaje artificialmente elevado a una arista futura de la ruta
     traci.vehicle.setAdaptedTraveltime(
         EMERGENCY_ID,
         TEST_PENALIZED_EDGE,
@@ -186,7 +180,6 @@ def configure_forced_rerouting_test(current_time: float):
         begTime=current_time,
         endTime=SIM_END
     )
-
     print(
         f"Prueba de rerouting activada: se asignan "
         f"{TEST_EDGE_TRAVEL_TIME_S:.0f} s a la arista "

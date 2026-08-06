@@ -19,7 +19,7 @@ La zona de estudio seleccionada para el desarrollo del proyecto corresponde al e
 ```text
 TFM-Gemelo_Digital_de_Movilidad_Urbana/
 │
-├── TFM_Procesamiento_datos_trafico_Madrid.ipynb
+├── Preprocesamiento_datos_trafico_Madrid.ipynb
 │
 ├── version-1/
 │   ├── configuraciones/
@@ -52,7 +52,7 @@ TFM-Gemelo_Digital_de_Movilidad_Urbana/
 
 ## Fase previa: preprocesamiento de datos
 
-El notebook `TFM_Procesamiento_datos_trafico_Madrid.ipynb` se utiliza para estudiar y preparar los datos abiertos de tráfico antes de ejecutar las versiones de simulación.
+El notebook `Preprocesamiento_datos_trafico_Madrid.ipynb` se utiliza para estudiar y preparar los datos abiertos de tráfico antes de ejecutar las versiones de simulación.
 
 En esta fase se realiza la lectura de los datos, la transformación de coordenadas, la delimitación de la zona de estudio y el filtrado de los sensores situados dentro del área seleccionada.
 
@@ -177,7 +177,7 @@ export PYTHONPATH=$SUMO_HOME/tools:$PYTHONPATH
 El notebook de preprocesamiento se encuentra en la raíz del repositorio:
 
 ```text
-TFM_Procesamiento_datos_trafico_Madrid.ipynb
+Preprocesamiento_datos_trafico_Madrid.ipynb
 ```
 
 Para ejecutarlo es necesario tener instalado Jupyter Notebook o JupyterLab, además de las librerías indicadas en el fichero `requirements.txt`.
@@ -191,7 +191,7 @@ jupyter notebook
 Después, en la ventana del navegador que se abre automáticamente, se selecciona el fichero:
 
 ```text
-TFM_Procesamiento_datos_trafico_Madrid.ipynb
+Preprocesamiento_datos_trafico_Madrid.ipynb
 ```
 
 También puede abrirse con JupyterLab mediante:
