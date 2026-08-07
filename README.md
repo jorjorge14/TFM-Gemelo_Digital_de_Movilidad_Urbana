@@ -4,7 +4,7 @@ Código desarrollado para el Trabajo Fin de Máster **"Desarrollo de un gemelo d
 
 El proyecto consiste en el desarrollo de un entorno de simulación de movilidad urbana basado en datos abiertos, utilizando información de tráfico del Ayuntamiento de Madrid y una red viaria obtenida a partir de OpenStreetMap. El objetivo principal es construir escenarios de simulación en SUMO que permitan analizar el comportamiento del tráfico urbano y estudiar estrategias orientadas a mejorar el desplazamiento de vehículos de emergencia.
 
-El repositorio está organizado en distintas versiones independientes. Cada versión representa una fase de desarrollo del proyecto y puede ejecutarse por separado, sin necesidad de ejecutar las versiones anteriores. Esta organización permite consultar de forma progresiva la evolución del sistema, desde una simulación básica con tráfico aleatorio hasta una simulación avanzada con datos reales, vehículo de emergencia, rerouting dinámico y prioridad semafórica.
+El repositorio está organizado en distintas versiones independientes. Cada versión representa una fase de desarrollo del proyecto y puede ejecutarse por separado, sin necesidad de ejecutar las versiones anteriores. Esta organización permite consultar de forma progresiva la evolución del sistema, desde una simulación básica con tráfico aleatorio hasta una simulación avanzada con datos reales, vehículo de emergencia, replanificación dinámica de rutas y prioridad semafórica.
 
 ## Zona de estudio
 
@@ -80,9 +80,9 @@ La tercera versión introduce un vehículo de emergencia en la simulación y uti
 
 Esta versión permite validar una primera estrategia de prioridad semafórica para vehículos de emergencia.
 
-### Versión 4: rerouting dinámico y prioridad semafórica adaptativa
+### Versión 4: replanificación dinámica de rutas y prioridad semafórica 
 
-La cuarta versión es la más avanzada del proyecto. En ella se incorpora la selección de origen y destino del vehículo de emergencia, el cálculo dinámico de rutas, el rerouting durante la simulación y una lógica mejorada de prioridad semafórica.
+La cuarta versión es la más avanzada del proyecto. En ella se incorpora la selección de origen y destino del vehículo de emergencia, el cálculo dinámico de rutas, la replanificación dinámica de rutas durante la simulación y una lógica mejorada de prioridad semafórica.
 
 Esta versión permite comparar distintos escenarios y analizar si las estrategias aplicadas reducen el tiempo de desplazamiento del vehículo de emergencia.
 

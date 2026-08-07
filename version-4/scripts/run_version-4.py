@@ -58,7 +58,7 @@ time.sleep(5)
 
 # --------------------------------------------------
 # 7. Ejecución del sistema de vehículo de emergencia
-# El script se conecta a SUMO por TraCI, introduce el vehículo de emergencia, aplica prioridad semafórica, realiza rerouting y registra resultados.
+# El script se conecta a SUMO por TraCI, introduce el vehículo de emergencia, aplica prioridad semafórica y replanificación dinámica de rutas y registra resultados.
 # --------------------------------------------------
 print("7) Ejecutando vehículo de emergencia...")
 subprocess.run(["python", "emergency_v4.py"], cwd=ROOT / "scripts", check=True)

@@ -22,9 +22,9 @@ TO_EDGE = "5990070#1"   #"5989317"   #"5990532"
 # --------------------------------------------------
 # Modos de ejecución!!!!
 # --------------------------------------------------
-# "base"         -> simulación sin prioridad semafórica ni rerouting
-# "inteligente" -> simulación con prioridad semafórica y rerouting dinámico
-MODE = "inteligente" 
+# "base"         -> simulación sin prioridad semafórica ni replanificación dinámica de rutas
+# "inteligente" -> simulación con prioridad semafórica y replanificación dinámica de rutas
+MODE = "base" 
 
 # Tiempo máximo de simulación
 SIM_END = 3600
@@ -45,11 +45,11 @@ STUCK_TIME_S = 8
 TLS_COOLDOWN_S = 20            
 
 # --------------------------------------------------
-# Parámetros de rerouting
+# Parámetros de la replanificación dinámica de rutas
 # --------------------------------------------------
 # Frecuencia mínima entre recálculos de ruta
 REROUTE_EVERY_S = 10
-# Distancia mínima al siguiente semáforo para permitir rerouting. Si el vehículo de emergencia ya está cerca de un cruce, se evita modificar su ruta
+# Distancia mínima al siguiente semáforo para permitir replanificación. Si el vehículo de emergencia ya está cerca de un cruce, se evita modificar su ruta
 REROUTE_MIN_TLS_DIST_M = 20.0 
 
 # Rutas donde se almacenan los resultados de las simulaciones para poder analizarlos
@@ -59,7 +59,7 @@ RESULTS_CSV = RESULTS_DIR / "emergency_results.csv"
 PM_XML = BASE_DIR / "datos_arguelles" / "pm_live.xml"
 
 # --------------------------------------------------
-# Parámetros para prueba controlada del rerouting (con edge destino "5990070#1")
+# Parámetros para prueba controlada de la replanificación dinámica (con edge destino "5990070#1")
 # --------------------------------------------------
 # Para hacer la prueba poner valor a TRUE, sino dejar en FALSE 
 FORCE_REROUTING_TEST = True
@@ -163,7 +163,7 @@ def configure_forced_rerouting_test(current_time: float):
     )
     if TEST_PENALIZED_EDGE not in current_route:
         print(
-            f"Prueba de rerouting: la arista "
+            f"Prueba de replanificación dinámica de rutas: la arista "
             f"{TEST_PENALIZED_EDGE} no pertenece a la ruta inicial"
         )
         return
@@ -181,7 +181,7 @@ def configure_forced_rerouting_test(current_time: float):
         endTime=SIM_END
     )
     print(
-        f"Prueba de rerouting activada: se asignan "
+        f"Prueba de replanificación dinámica de rutas activada: se asignan "
         f"{TEST_EDGE_TRAVEL_TIME_S:.0f} s a la arista "
         f"{TEST_PENALIZED_EDGE}"
     )
@@ -237,7 +237,7 @@ def reroute_emergency(current_time: float):
         else:
             print(f"t={current_time:.0f} Se recalcula la ruta")
     except Exception as e:
-        print(f"t={current_time:.0f} Ha aparecido un error durante el rerouting: {e}")
+        print(f"t={current_time:.0f} Ha aparecido un error durante la replanificación dinámica de rutas: {e}")
 
 
 # Guarda el estado original de un semáforo antes de modificarlo (solo se guarda la primera vez que se interviene ese semáforo)
@@ -582,7 +582,7 @@ def main():
             metrics["distance"] = distance
             metrics["speed_samples"].append(speed)
 
-            # En modo inteligente se activan el rerouting y la prioridad semafórica
+            # En modo inteligente se activan la replanificación de rutas y la prioridad semafórica
             if MODE == "inteligente":
                 if t - last_reroute_t >= REROUTE_EVERY_S:
                     reroute_emergency(t)
