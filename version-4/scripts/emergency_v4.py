@@ -62,7 +62,7 @@ PM_XML = BASE_DIR / "datos_arguelles" / "pm_live.xml"
 # Parámetros para prueba controlada de la replanificación dinámica (con edge destino "5990070#1")
 # --------------------------------------------------
 # Para hacer la prueba poner valor a TRUE, sino dejar en FALSE 
-FORCE_REROUTING_TEST = True
+FORCE_REROUTING_TEST = False
 # Edge futuro de la ruta a la que se asigna un coste muy elevado 
 TEST_PENALIZED_EDGE = "43407381#4"
 # Tiempo de viaje artificial asignado a esa arista
